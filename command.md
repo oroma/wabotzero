@@ -9,20 +9,62 @@
 
 # ESP < -- > MEGA
 ## command set
-- '{'로 시작
-- '}'로 끝
-- ';'로 명령어 구분
+- byte 로 구성
 ### preset
 ```
-{preset;1}
++-----+------+----+
+| 'P' | 0xFF | \n |
++-----+------+----+
 ```
-preset 설정 중에 1번
+e.g.) preset 설정 중에 1번
 ```
-{preset;4}
++-----+------+----+
+| 'P' | 0x01 | \n |
++-----+------+----+
 ```
-preset 설정 중에 4번
 ### manual
 ```
-{joint;l;20;20;20}
+M (anual)
+├── J (oint)
+│   ├── A (rm)
+│   ├── D (isc)
+│   └── N (eck)
+└── W (heel)
+    ├── B (ackward)
+    ├── F (orward)
+    ├── L (eft)
+    ├── R (ight)
+    ├── TL (Turn Left)
+    └── TR (Turn Right)
+M (anual)
+├── J (oint)
+│   ├── L (eft)
+│   │   ├── A (rm)
+│   │   ├── D (isc)
+│   │   └── N (eck)
+│   └── R (ight)
+│       ├── A (rm)
+│       ├── D (isc)
+│       └── N (eck)
+└── W (heel)
+    ├── D (irection)
+    │   ├── B (ackward)
+    │   ├── F (orward)
+    │   ├── L (eft)
+    │   └── R (ight)
+    └── T (urn)
+        ├── L (eft)
+        └── R (ight)
 ```
-joint 동작 명령, left joint, angle 20
+e.g.) 메뉴얼, joint 동작 명령, left, angle 180, 180, 180
+```
++-----+-----+-----+-----+------+------+------+----+
+| 'M' | 'J' | 'A' | 'L' | 0xB4 | 0xB4 | 0xB4 | \n |
++-----+-----+-----+-----+------+------+------+----+
+```
+e.g.) 메뉴얼, wheel 동작 명령, forward
+```
++-----+-----+-----+-----+----+
+| 'M' | 'W' | 'D' | 'F' | \n |
++-----+-----+-----+-----+----+
+```
