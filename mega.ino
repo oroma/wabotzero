@@ -2,7 +2,12 @@
 #include <Servo.h>  //add '<' and '>' before and after servo.h
  
 int joint_l_0_pin = 4; // pwm pin 4
- 
+int joint_l_1_pin = 5; // pwm pin 5
+int joint_l_2_pin = 6; // pwm pin 6
+int joint_r_0_pin = 7; // pwm pin 7
+int joint_r_1_pin = 8; // pwm pin 8
+int joint_r_2_pin = 9; // pwm pin 9
+
 SoftwareSerial inSerial(2,3);
 Servo joint_l_0;
 
@@ -30,16 +35,17 @@ int doMovingJointArm(char lr, unsigned char j0, unsigned char j1, unsigned char 
   Serial.print("manual: ");
   if (lr == 'L') {
     Serial.print("left, ");
+    joint_l_0.write((int)j0);
+    joint_l_1.write((int)j1);
+    joint_l_2.write((int)j2);
   } else if (lr == 'R') {
     Serial.print("right, ");
+    joint_r_0.write((int)j0);
+    joint_r_1.write((int)j1);
+    joint_r_2.write((int)j2);
   }
-  Serial.print(j0, DEC);
-  joint_l_0.write((int)j0);      // Turn SG90 servo back to 90 degrees (center position)
+
   delay(2000);
-  Serial.print(' ');
-  Serial.print(j1, DEC);
-  Serial.print(' ');
-  Serial.print(j2, DEC);
 
   return lr;
 }
