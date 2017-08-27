@@ -5,7 +5,7 @@
  * Open browser, visit 192.168.4.1
  */
 #include <ESP8266WiFi.h>
-#include <WiFiClient.h> 
+#include <WiFiClient.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
 #include <SoftwareSerial.h>
@@ -19,7 +19,8 @@ const byte rxPin = 5;
 const byte txPin = 6;
 SoftwareSerial toMega(rxPin, txPin);
 
-void handleRoot() {
+void handleRoot()
+{
   Serial.println(server.uri());
   Serial.println(server.method());
   Serial.println(server.args());
@@ -27,7 +28,8 @@ void handleRoot() {
   response();
 }
 
-void handleCommand() {
+void handleCommand()
+{
   Serial.println(server.uri());
   Serial.println(server.method());
   Serial.println(server.args());
@@ -35,31 +37,34 @@ void handleCommand() {
   response();
 }
 
-void handleJointCommand() {
+void handleJointCommand()
+{
   Serial.println(server.uri());
   Serial.println(server.method());
   Serial.println(server.args());
 
   // range: 30 ~ 150
   int errorCode = 200;
-  char cmd[8] = { 'M', 'J', 'A', 'L', 0xff, 0xff, 0xff, '\0' };
+  char cmd[8] = {'M', 'J', 'A', 'L', 0xff, 0xff, 0xff, '\0'};
 
   // e.g.) http://192.168.4.1/command/joint?part=a&d=l&no=2&angle=110
-  if (server.hasArg("part")  && 
-      server.hasArg("d")     &&
-      server.hasArg("no")    &&
+  if (server.hasArg("part") &&
+      server.hasArg("d") &&
+      server.hasArg("no") &&
       server.hasArg("angle"))
   {
-    cmd[2] = toupper(server.arg("part")[0]);  // part
-    cmd[3] = toupper(server.arg("d")[0]);  // direction
+    cmd[2] = toupper(server.arg("part")[0]); // part
+    cmd[3] = toupper(server.arg("d")[0]);    // direction
     cmd[4 + server.arg("no").toInt()] = (unsigned char)server.arg("angle").toInt();
-  } else {
+  }
+  else
+  {
     errorCode = 400; // Bad Request
   }
   Serial.println(cmd);
 
   // send to mega
-  int res = toMega.write(cmd);
+  int res = toMega.print(cmd);
   Serial.print(res, DEC);
 
   String r = "" + res;
@@ -77,8 +82,9 @@ void handleJointCommand() {
   message += "\",";
   message += "\"arguments\": [";
 
-  for (uint8_t i = 0; i < server.args(); i++) {
-    message += " { \"" + server.argName ( i ) + "\": \"" + server.arg ( i ) + "\" }";
+  for (uint8_t i = 0; i < server.args(); i++)
+  {
+    message += " { \"" + server.argName(i) + "\": \"" + server.arg(i) + "\" }";
     if (i < server.args() - 1)
       message += ", ";
   }
@@ -87,7 +93,8 @@ void handleJointCommand() {
   server.send(errorCode, "application/json", message);
 }
 
-void handleWheelCommand() {
+void handleWheelCommand()
+{
   Serial.println(server.uri());
   Serial.println(server.method());
   Serial.println(server.args());
@@ -95,7 +102,8 @@ void handleWheelCommand() {
   response();
 }
 
-void handlePresetCommand() {
+void handlePresetCommand()
+{
   Serial.println(server.uri());
   Serial.println(server.method());
   Serial.println(server.args());
@@ -108,27 +116,34 @@ void ledon(int pin)
   digitalWrite(12, LOW);
   digitalWrite(13, LOW);
   digitalWrite(14, LOW);
-  
+
   digitalWrite(pin, HIGH);
 }
-void handleActCommand() {
+void handleActCommand()
+{
   Serial.println(server.uri());
   Serial.println(server.method());
   Serial.println(server.arg("no"));
 
-  if (server.arg("no") == "0") {
+  if (server.arg("no") == "0")
+  {
     Serial.println("action0");
     ledon(12);
-  } else if (server.arg("no") == "1") {
+  }
+  else if (server.arg("no") == "1")
+  {
     Serial.println("action1");
     ledon(13);
-  } else if (server.arg("no") == "2") {
+  }
+  else if (server.arg("no") == "2")
+  {
     Serial.println("action2");
     ledon(14);
   }
   response();
 }
-void handleNotFound() {
+void handleNotFound()
+{
   String message = "";
   message += "{ \"uri\": ";
   message += "\"" + server.uri() + "\",";
@@ -137,8 +152,9 @@ void handleNotFound() {
   message += "\",";
   message += "\"arguments\": [";
 
-  for (uint8_t i = 0; i < server.args(); i++) {
-    message += " { \"" + server.argName ( i ) + "\": \"" + server.arg ( i ) + "\" }";
+  for (uint8_t i = 0; i < server.args(); i++)
+  {
+    message += " { \"" + server.argName(i) + "\": \"" + server.arg(i) + "\" }";
     if (i < server.args() - 1)
       message += ", ";
   }
@@ -147,35 +163,42 @@ void handleNotFound() {
   server.send(404, "application/json", message);
 }
 
-void response() {
+void response()
+{
   String htmlRes = "{ \"result\": true }";
   server.send(200, "application/json", htmlRes);
 }
 
-void setup() {
-    delay(1000);
-    Serial.begin(115200);
-    Serial.println();
+void setup()
+{
+  delay(1000);
+  Serial.begin(9600);
+  toMega.begin(9600);
 
-    WiFi.softAP(ssid, password);
+  toMega.print('a');
+  Serial.println();
 
-    IPAddress apip = WiFi.softAPIP();
-    Serial.print("visit: \n");
-    Serial.println(apip);
-    if (MDNS.begin("esp8266.local")) {
-      Serial.println ( "MDNS responder started" );
+  WiFi.softAP(ssid, password);
+
+  IPAddress apip = WiFi.softAPIP();
+  Serial.print("visit: \n");
+  Serial.println(apip);
+  if (MDNS.begin("esp8266.local"))
+  {
+    Serial.println("MDNS responder started");
   }
-    server.on("/", handleRoot);
-    server.on("/command", handleCommand);
-    server.on("/command/joint", handleJointCommand);
-    server.on("/command/wheel", handleWheelCommand);
-    server.on("/preset", handlePresetCommand);
-    server.on("/preset/act", handleActCommand);
-    server.onNotFound(handleNotFound);
-    server.begin();
-    Serial.println("HTTP server beginned");
+  server.on("/", handleRoot);
+  server.on("/command", handleCommand);
+  server.on("/command/joint", handleJointCommand);
+  server.on("/command/wheel", handleWheelCommand);
+  server.on("/preset", handlePresetCommand);
+  server.on("/preset/act", handleActCommand);
+  server.onNotFound(handleNotFound);
+  server.begin();
+  Serial.println("HTTP server beginned");
 }
 
-void loop() {
-    server.handleClient();
+void loop()
+{
+  server.handleClient();
 }
