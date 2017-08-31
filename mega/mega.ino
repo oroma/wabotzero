@@ -10,6 +10,11 @@ int joint_r_2_pin = 9; // pwm pin 9
 
 SoftwareSerial inSerial(2,3);
 Servo joint_l_0;
+Servo joint_l_1;
+Servo joint_l_2;
+Servo joint_r_0;
+Servo joint_r_1;
+Servo joint_r_2;
 
 #define MAX_CMD_COUNT 7
 
@@ -20,6 +25,12 @@ void setup() {
 
 //  pinMode(4, OUTPUT);
   joint_l_0.attach(joint_l_0_pin);
+  joint_l_1.attach(joint_l_1_pin);
+  joint_l_2.attach(joint_l_2_pin);
+  joint_r_0.attach(joint_r_0_pin);
+  joint_r_1.attach(joint_r_1_pin);
+  joint_r_2.attach(joint_r_2_pin);
+
 }
 
 int doMovingByPreset(unsigned char preset)
@@ -73,7 +84,11 @@ char testCmds[MAX_CMD_COUNT][10] = {
   { 'M', 'W', 'D', 'B', '\n' }
 };
 
+
+
 void loop() {
+
+ 
   while (1) {
     for (int i; i < MAX_CMD_COUNT; i++) {
       if (testCmds[i][0] == 'M') {
