@@ -43,22 +43,31 @@ int doMovingByPreset(unsigned char preset)
   return preset;
 }
 
+int setJointAngle(Servo s, int v)
+{
+  if (v > 0 && v < 0xFF)
+  {
+    s.write(v);
+    Serial.println(v);
+  }
+  // do sth or not?
+}
 int doMovingJointArm(char lr, unsigned char j0, unsigned char j1, unsigned char j2)
 {
   Serial.print("manual: ");
   if (lr == 'L')
   {
-    Serial.print("left, ");
-    joint_l_0.write((int)j0);
-    joint_l_1.write((int)j1);
-    joint_l_2.write((int)j2);
+    Serial.println("left");
+    setJointAngle(joint_l_0, (int)j0);
+    setJointAngle(joint_l_1, (int)j1);
+    setJointAngle(joint_l_2, (int)j2);
   }
   else if (lr == 'R')
   {
-    Serial.print("right, ");
-    joint_r_0.write((int)j0);
-    joint_r_1.write((int)j1);
-    joint_r_2.write((int)j2);
+    Serial.println("right");
+    setJointAngle(joint_r_0, (int)j0);
+    setJointAngle(joint_r_1, (int)j1);
+    setJointAngle(joint_r_2, (int)j2);
   }
 
   delay(1000);
@@ -105,5 +114,6 @@ void loop()
   {
     cmd = Serial1.readString(); // read the incoming data as string
     dispatchCommand(cmd.c_str());
+    Serial.println(cmd);
   }
 }
