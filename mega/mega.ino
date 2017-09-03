@@ -15,6 +15,15 @@ Servo joint_r_0;
 Servo joint_r_1;
 Servo joint_r_2;
 
+#define MAX_PRESET 3
+int presetJoint[MAX_PRESET][6] = {
+  { 0x10, 0x10, 0x10, 0x10, 0x10, 0x10 },
+  { 0x50, 0x50, 0x50, 0x50, 0x50, 0x50 },
+  { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 }
+};
+
+int setJointAngle(Servo s, int v);
+
 void setup()
 {
   Serial1.begin(9600);
@@ -40,6 +49,17 @@ int doMovingByPreset(unsigned char preset)
   Serial.print("preset: ");
   Serial.print(preset, DEC);
 
+  if (preset < 0 || preset > MAX_PRESET)
+    return -1;
+ 
+  setJointAngle(joint_l_0, presetJoint[preset][0]);
+  setJointAngle(joint_l_1, presetJoint[preset][1]);
+  setJointAngle(joint_l_2, presetJoint[preset][2]);
+
+  setJointAngle(joint_r_0, presetJoint[preset][3]);
+  setJointAngle(joint_r_1, presetJoint[preset][4]);
+  setJointAngle(joint_r_2, presetJoint[preset][5]);
+    
   return preset;
 }
 
