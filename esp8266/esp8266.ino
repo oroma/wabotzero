@@ -108,40 +108,28 @@ void handlePresetCommand()
   Serial.println(server.method());
   Serial.println(server.args());
 
+  // range: 30 ~ 150
+  int errorCode = 200;
+  char cmd[3] = {'P', 0xff, '\0'};
+
+  // e.g.) http://192.168.4.1/preset/act=1
+  if (server.hasArg("act"))
+  {
+    cmd[1] = (unsigned char)server.arg("act").toInt();
+  }
+  else
+  {
+    errorCode = 400; // Bad Request
+  }
+  Serial.println(cmd);
+
+  // send to mega
+  int res = toMega.print(cmd);
+  Serial.print(res, DEC);
+
   response();
 }
 
-void ledon(int pin)
-{
-  digitalWrite(12, LOW);
-  digitalWrite(13, LOW);
-  digitalWrite(14, LOW);
-
-  digitalWrite(pin, HIGH);
-}
-void handleActCommand()
-{
-  Serial.println(server.uri());
-  Serial.println(server.method());
-  Serial.println(server.arg("no"));
-
-  if (server.arg("no") == "0")
-  {
-    Serial.println("action0");
-    ledon(12);
-  }
-  else if (server.arg("no") == "1")
-  {
-    Serial.println("action1");
-    ledon(13);
-  }
-  else if (server.arg("no") == "2")
-  {
-    Serial.println("action2");
-    ledon(14);
-  }
-  response();
-}
 void handleNotFound()
 {
   String message = "";
@@ -192,7 +180,6 @@ void setup()
   server.on("/command/joint", handleJointCommand);
   server.on("/command/wheel", handleWheelCommand);
   server.on("/preset", handlePresetCommand);
-  server.on("/preset/act", handleActCommand);
   server.onNotFound(handleNotFound);
   server.begin();
   Serial.println("HTTP server beginned");
