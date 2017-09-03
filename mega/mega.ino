@@ -103,8 +103,61 @@ int doMovingJointDisc(unsigned char value)
   return value;
 }
 
-int doMovingWheel(unsigned char d, unsigned char m)
+int setWheelForward(bool on)
 {
+}
+
+int setWheelBackward(bool on)
+{
+}
+
+int setWheelLeft(bool on)
+{
+}
+
+int setWheelRight(bool on)
+{
+}
+
+int setWheelTurnLeft(bool on)
+{
+}
+
+int setWheelTurnRight(bool on)
+{
+}
+
+#define COUNT_FP 4
+int doMovingWheel(unsigned char d, unsigned char m, unsigned char t)
+{
+  int (*wheelMoveFp[COUNT_FP])(bool) = {
+    setWheelForward,
+    setWheelBackward,
+    setWheelLeft,
+    setWheelRight
+  };
+
+  int (*wheelTurnFp[2])(bool) = {
+    setWheelTurnLeft,
+    setWheelTurnRight
+  };
+
+  int op = (int)m;
+
+  if (d == 'D') {
+    
+    if (op < 0 || op > COUNT_FP)
+      return -1;
+
+    wheelMoveFp[op]((t > 0 ? true : false));
+
+  } else if (d == 'T') {
+    if (op < 0 || op > 2)
+      return -1;
+
+    wheelTurnFp[op]((t > 0 ? true : false));
+  }
+
   return d;
 }
 
@@ -117,7 +170,9 @@ int dispatchCommand(char cmd[])
     if (cmd[1] == 'J' && cmd[2] == 'D')
       doMovingJointDisc(cmd[3]);
     if (cmd[1] == 'W' && cmd[2] == 'D')
-      doMovingWheel(cmd[3], cmd[4]);
+      doMovingWheel(cmd[2], cmd[3], cmd[4]);
+    if (cmd[1] == 'W' && cmd[2] == 'T')
+      doMovingWheel(cmd[2], cmd[3], cmd[4]);
   }
   else if (cmd[0] == 'P')
   {
