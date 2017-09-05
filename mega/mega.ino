@@ -127,19 +127,26 @@ int setWheelTurnRight(bool on)
 {
 }
 
-#define COUNT_FP 4
+int setWheelTurnStop(bool on)
+{
+  return 0;
+}
+
+#define COUNT_FP 5
 int doMovingWheel(unsigned char d, unsigned char m, unsigned char t)
 {
   int (*wheelMoveFp[COUNT_FP])(bool) = {
     setWheelForward,
     setWheelBackward,
     setWheelLeft,
-    setWheelRight
+    setWheelRight,
+    setWheelStop
   };
 
-  int (*wheelTurnFp[2])(bool) = {
+  int (*wheelTurnFp[3])(bool) = {
     setWheelTurnLeft,
-    setWheelTurnRight
+    setWheelTurnRight,
+    setWheelTurnStop
   };
 
   int op = (int)m;
