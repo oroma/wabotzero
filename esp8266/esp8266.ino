@@ -99,6 +99,25 @@ void handleWheelCommand()
   Serial.println(server.method());
   Serial.println(server.args());
 
+  // range: 30 ~ 150
+  int errorCode = 200;
+  char cmd[3] = {'P', 0xff, '\0'};
+
+  // e.g.) http://192.168.4.1/preset/act=1
+  if (server.hasArg("act"))
+  {
+    cmd[1] = (unsigned char)server.arg("act").toInt();
+  }
+  else
+  {
+    errorCode = 400; // Bad Request
+  }
+  Serial.println(cmd);
+
+  // send to mega
+  int res = toMega.print(cmd);
+  Serial.print(res, DEC);
+
   response(200);
 }
 
