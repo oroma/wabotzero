@@ -105,30 +105,49 @@ int doMovingJointDisc(unsigned char value)
 
 int setWheelForward(bool on)
 {
+  Serial.println("setWheelForward");
+  return 0;
 }
 
 int setWheelBackward(bool on)
 {
+  Serial.println("setWheelBackward");
+  return 0;
 }
 
 int setWheelLeft(bool on)
 {
+  Serial.println("setWheelLeft");
+  return 0;
 }
 
 int setWheelRight(bool on)
 {
+  Serial.println("setWheelRight");
+  return 0;
+}
+
+int setWheelStop(bool on)
+{
+  Serial.println("setWheelStop");
+  return 0;
 }
 
 int setWheelTurnLeft(bool on)
 {
+  Serial.println("setWheelTurnLeft");
+  return 0;
 }
 
 int setWheelTurnRight(bool on)
 {
+  Serial.println("setWheelTurnRight");
+  return 0;
 }
 
 int setWheelTurnStop(bool on)
 {
+  Serial.println("setWheelTurnStop");
   return 0;
 }
 
