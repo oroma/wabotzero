@@ -25,7 +25,7 @@ void handleRoot()
   Serial.println(server.method());
   Serial.println(server.args());
 
-  response(200);
+  response(200, -1);
 }
 
 void handleCommand()
@@ -34,7 +34,7 @@ void handleCommand()
   Serial.println(server.method());
   Serial.println(server.args());
 
-  response(200);
+  response(200, -1);
 }
 
 void handleJointCommand()
@@ -67,30 +67,7 @@ void handleJointCommand()
   int res = toMega.print(cmd);
   Serial.print(res, DEC);
 
-  String r = "" + res;
-  String message = "";
-  message += "{ \"uri\": ";
-  message += "\"" + server.uri() + "\",";
-  message += "\"method\": \"";
-  message += (server.method() == HTTP_GET) ? "GET" : "POST";
-  message += "\",";
-  message += "\"command\": \"";
-  message += cmd;
-  message += "\",";
-  message += "\"written\": \"";
-  message += "" + res;
-  message += "\",";
-  message += "\"arguments\": [";
-
-  for (uint8_t i = 0; i < server.args(); i++)
-  {
-    message += " { \"" + server.argName(i) + "\": \"" + server.arg(i) + "\" }";
-    if (i < server.args() - 1)
-      message += ", ";
-  }
-  message += "]}";
-
-  server.send(errorCode, "application/json", message);
+  response(errorCode, res);
 }
 
 void handleWheelCommand()
@@ -99,14 +76,18 @@ void handleWheelCommand()
   Serial.println(server.method());
   Serial.println(server.args());
 
-  // range: 30 ~ 150
   int errorCode = 200;
-  char cmd[3] = {'P', 0xff, '\0'};
+  char cmd[5] = {'M', 'W', 'D', 'S', '\0'};
 
-  // e.g.) http://192.168.4.1/preset/act=1
-  if (server.hasArg("act"))
+  // e.g.) http://192.168.4.1/command/wheel?d=f
+  if (server.hasArg("d"))
   {
-    cmd[1] = (unsigned char)server.arg("act").toInt();
+    cmd[3] = toupper(server.arg("d")[0]);
+  }
+  else if (server.hasArg("t"))
+  {
+    cmd[2] = 'T';
+    cmd[3] = toupper(server.arg("t")[0]);
   }
   else
   {
@@ -118,7 +99,7 @@ void handleWheelCommand()
   int res = toMega.print(cmd);
   Serial.print(res, DEC);
 
-  response(200);
+  response(errorCode, res);
 }
 
 void handlePresetCommand()
@@ -146,7 +127,7 @@ void handlePresetCommand()
   int res = toMega.print(cmd);
   Serial.print(res, DEC);
 
-  response(200);
+  response(errorCode, res);
 }
 
 void handleNotFound()
@@ -169,10 +150,9 @@ void handleNotFound()
 
   server.send(404, "application/json", message);
 }
-
-void response(int code)
+void response(int code, int wrote)
 {
-  String htmlRes = "{ \"result\": true }";
+  String htmlRes = "{ \"result\": true, \"wrote\": " + String(wrote) + " }";
   server.send(code, "application/json", htmlRes);
 }
 
