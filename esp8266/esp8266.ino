@@ -25,7 +25,7 @@ void handleRoot()
   Serial.println(server.method());
   Serial.println(server.args());
 
-  response();
+  response(200);
 }
 
 void handleCommand()
@@ -34,7 +34,7 @@ void handleCommand()
   Serial.println(server.method());
   Serial.println(server.args());
 
-  response();
+  response(200);
 }
 
 void handleJointCommand()
@@ -99,7 +99,7 @@ void handleWheelCommand()
   Serial.println(server.method());
   Serial.println(server.args());
 
-  response();
+  response(200);
 }
 
 void handlePresetCommand()
@@ -127,7 +127,7 @@ void handlePresetCommand()
   int res = toMega.print(cmd);
   Serial.print(res, DEC);
 
-  response();
+  response(200);
 }
 
 void handleNotFound()
@@ -151,10 +151,10 @@ void handleNotFound()
   server.send(404, "application/json", message);
 }
 
-void response()
+void response(int code)
 {
   String htmlRes = "{ \"result\": true }";
-  server.send(200, "application/json", htmlRes);
+  server.send(code, "application/json", htmlRes);
 }
 
 void setup()
