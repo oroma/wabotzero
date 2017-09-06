@@ -4,8 +4,10 @@
 #include <Adafruit_PWMServoDriver.h> // PCA9685 Servo Drive Board
 
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
+
 #define SERVOMIN  150 // this is the 'minimum' pulse length count (out of 4096)
 #define SERVOMAX  600 // this is the 'maximum' pulse length count (out of 4096)
+
 #define WheelBack1 2
 #define WheelBack2 3
 #define WheelLeft1 4
@@ -14,10 +16,10 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 #define WheelFront2 7
 #define WheelRight 8
 #define WheelRight 9
+
 #define MaxSpeed 180
+
 #define acc 3 //속도 증가
-
-
 
 int joint_l_0_pin = 0; // PCA9865 Pin 0
 int joint_l_1_pin = 1; // PCA9865 Pin 1
@@ -26,17 +28,12 @@ int joint_r_0_pin = 3; // PCA9865 Pin 3
 int joint_r_1_pin = 4; // PCA9865 Pin 4
 int joint_r_2_pin = 5; // PCA9865 Pin 5
 
-
-<<<<<<< HEAD
-=======
-
 #define MAX_PRESET 3
 int presetJoint[MAX_PRESET][6] = {
   { 0x10, 0x10, 0x10, 0x10, 0x10, 0x10 },
   { 0x50, 0x50, 0x50, 0x50, 0x50, 0x50 },
   { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 }
 };
->>>>>>> 21c47be11a68bdba7ea8f0781bc025d15d998273
 
 int setJointAngle(Servo s, int v);
 
@@ -52,11 +49,6 @@ void setup()
   pinMode(WheelFront2, OUTPUT);
   pinMode(WheelRight1, OUTPUT);
   pinMode(WheelRight2, OUTPUT); // Wheel PWM Control
-
-<<<<<<< HEAD
-
-=======
->>>>>>> 21c47be11a68bdba7ea8f0781bc025d15d998273
 }
 
 int doMovingByPreset(unsigned char preset)
@@ -299,34 +291,9 @@ int dispatchCommand(char cmd[])
   return 0;
 }
 
-<<<<<<< HEAD
-char EspCmd[10];
-
-void loop() {
-
-  if (inSerial.available())
-  {
-    EspCmd = inSerial.read();
-  }
-  while (1) {
-    for (int i; i < MAX_CMD_COUNT; i++) {
-      if (testCmds[i][0] == 'M') {,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
-        if (testCmds[i][1] == 'J' && testCmds[i][2] == 'A')
-          doMovingJointArm(testCmds[i][3], testCmds[i][4], testCmds[i][5], testCmds[i][6]);
-        if (testCmds[i][1] == 'J' && testCmds[i][2] == 'D')
-          doMovingJointDisc(testCmds[i][3]);
-        if (testCmds[i][1] == 'W' && testCmds[i][2] == 'D')
-          doMovingWheel(testCmds[i][3]);
-      } else if (testCmds[i][0] == 'P') {
-        doMovingByPreset(testCmds[i][1]);
-      }
-      Serial.println();
-    }
-=======
 void loop()
 {
   String cmd;
->>>>>>> 21c47be11a68bdba7ea8f0781bc025d15d998273
 
   while (Serial1.available())
   {
