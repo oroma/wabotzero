@@ -192,17 +192,14 @@ int setWheelTurnRight(bool on)
 
 int setWheelStop(bool on)
 {
-  for (int i = 0; i < MaxSpeed; i = i + acc)
-  {
-    analogWrite(WheelFront1, 0);
-    analogWrite(WheelFront2, i);
-    analogWrite(WheelBack1, 0);
-    analogWrite(WheelBack2, i);
-    analogWrite(WheelLeft1, 0);
-    analogWrite(WheelLeft2, i);
-    analogWrite(WheelRight1, 0);
-    analogWrite(WheelRight2, i);
-  }
+  analogWrite(WheelFront1, 0);
+  analogWrite(WheelFront2, 0);
+  analogWrite(WheelBack1, 0);
+  analogWrite(WheelBack2, 0);
+  analogWrite(WheelLeft1, 0);
+  analogWrite(WheelLeft2, 0);
+  analogWrite(WheelRight1, 0);
+  analogWrite(WheelRight2, 0);
 }
 
 #define COUNT_FP 5
