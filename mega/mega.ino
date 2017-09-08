@@ -13,18 +13,19 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 #define SERVOMIN 150 // this is the 'minimum' pulse length count (out of 4096)
 #define SERVOMAX 600 // this is the 'maximum' pulse length count (out of 4096)
 
-#define WheelBack1 2
-#define WheelBack2 3
-#define WheelLeft1 4
-#define WheelLeft2 5
-#define WheelFront1 6
-#define WheelFront2 7
+#define WheelBack1  2
+#define WheelBack2  3
+#define WheelFront1 4
+#define WheelFront2 5
+
+#define WheelLeft1  6
+#define WheelLeft2  7
 #define WheelRight1 8
 #define WheelRight2 9
 
-#define MaxSpeed 180
+#define MaxSpeed 0xff
 
-#define acc 3 //속도 증가
+#define acc 1 //속도 증가
 
 int joint_l_0_pin = 0; // PCA9865 Pin 0
 int joint_l_1_pin = 1; // PCA9865 Pin 1
@@ -159,10 +160,10 @@ int setWheelLeft(bool on)
 {
   for (int i = 0; i < MaxSpeed; i = i + acc)
   {
-    analogWrite(WheelLeft1, 0);
-    analogWrite(WheelLeft2, i);
-    analogWrite(WheelRight1, i);
-    analogWrite(WheelRight2, 0);
+    analogWrite(WheelFront1, 0);
+    analogWrite(WheelFront2, i);
+    analogWrite(WheelBack1, i);
+    analogWrite(WheelBack2, 0);
   }
 }
 
