@@ -236,7 +236,7 @@ int doTurnWheel(unsigned char d)
   }
 }
 
-int doMovingWheel(unsigned char d)
+int doMovingWheel(char d)
 {
   int (*wheelMoveFp[COUNT_FP])(bool) = {
       setWheelForward,
