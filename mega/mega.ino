@@ -5,6 +5,11 @@
 
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 
+#define MIN_PULSE_WIDTH       650
+#define MAX_PULSE_WIDTH       2350
+#define DEFAULT_PULSE_WIDTH   1500
+#define FREQUENCY             50
+
 #define SERVOMIN 150 // this is the 'minimum' pulse length count (out of 4096)
 #define SERVOMAX 600 // this is the 'maximum' pulse length count (out of 4096)
 
@@ -47,6 +52,9 @@ void setup()
 {
   Serial1.begin(9600);
   Serial.begin(9600);
+  pwm.begin();
+  pwm.setPWMFreq(FREQUENCY);
+
   pinMode(WheelBack1, OUTPUT);
   pinMode(WheelBack2, OUTPUT);
   pinMode(WheelLeft1, OUTPUT);
@@ -55,6 +63,15 @@ void setup()
   pinMode(WheelFront2, OUTPUT);
   pinMode(WheelRight1, OUTPUT);
   pinMode(WheelRight2, OUTPUT); // Wheel PWM Control
+}
+
+int pulseWidth(int angle)
+{
+  int pulse_wide, analog_value;
+  pulse_wide   = map(angle, 0, 180, MIN_PULSE_WIDTH, MAX_PULSE_WIDTH);
+  analog_value = int(float(pulse_wide) / 1000000 * FREQUENCY * 4096);
+  Serial.println(analog_value);
+  return analog_value;
 }
 
 int doMovingByPreset(unsigned char preset)
@@ -301,4 +318,10 @@ void loop()
     dispatchCommand(cmd.c_str());
     Serial.println(cmd);
   }
+//  pwm.setPWM(0, 0, pulseWidth(0));
+//  delay(1000);
+//  pwm.setPWM(0, 0, pulseWidth(120));
+//  delay(500);
+//  pwm.setPWM(0, 0, pulseWidth(90));
+//  delay(1000);
 }
