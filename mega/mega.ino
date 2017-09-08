@@ -23,7 +23,7 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 #define WheelRight1 8
 #define WheelRight2 9
 
-#define MaxSpeed 100 // TODO: fix me
+#define MAX_SPEED 100 // TODO: fix me
 
 #define ACCEL 1 //속도 증가
 
@@ -136,7 +136,7 @@ int doMovingJointDisc(unsigned char value)
 
 int setWheelForward(bool on)
 {
-  for (int i = 0; i < MaxSpeed; i += ACCEL)
+  for (int i = 0; i < MAX_SPEED; i += ACCEL)
   {
     analogWrite(WheelLeft1, i);
     analogWrite(WheelLeft2, 0);
@@ -147,7 +147,7 @@ int setWheelForward(bool on)
 
 int setWheelBackward(bool on)
 {
-  for (int i = 0; i < MaxSpeed; i += ACCEL)
+  for (int i = 0; i < MAX_SPEED; i += ACCEL)
   {
     analogWrite(WheelLeft1, 0);
     analogWrite(WheelLeft2, i);
@@ -158,7 +158,7 @@ int setWheelBackward(bool on)
 
 int setWheelLeft(bool on)
 {
-  for (int i = 0; i < MaxSpeed; i += ACCEL)
+  for (int i = 0; i < MAX_SPEED; i += ACCEL)
   {
     analogWrite(WheelFront1, 0);
     analogWrite(WheelFront2, i);
@@ -169,7 +169,7 @@ int setWheelLeft(bool on)
 
 int setWheelRight(bool on)
 {
-  for (int i = 0; i < MaxSpeed; i += ACCEL)
+  for (int i = 0; i < MAX_SPEED; i += ACCEL)
   {
     analogWrite(WheelFront1, i);
     analogWrite(WheelFront2, 0);
@@ -180,7 +180,7 @@ int setWheelRight(bool on)
 
 int setWheelTurnLeft(bool on)
 {
-  for (int i = 0; i < MaxSpeed; i += ACCEL)
+  for (int i = 0; i < MAX_SPEED; i += ACCEL)
   {
     analogWrite(WheelFront1, 0);
     analogWrite(WheelFront2, i);
@@ -195,7 +195,7 @@ int setWheelTurnLeft(bool on)
 
 int setWheelTurnRight(bool on)
 {
-  for (int i = 0; i < MaxSpeed; i += ACCEL)
+  for (int i = 0; i < MAX_SPEED; i += ACCEL)
   {
     analogWrite(WheelFront1, i);
     analogWrite(WheelFront2, 0);

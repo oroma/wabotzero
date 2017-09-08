@@ -15,8 +15,8 @@ const char *password = "password";
 
 ESP8266WebServer server(80);
 
-const byte rxPin = 14;
-const byte txPin = 12;
+const byte rxPin = 14; // D5
+const byte txPin = 12; // D6
 SoftwareSerial toMega(rxPin, txPin);
 
 void handleRoot()
