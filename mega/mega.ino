@@ -24,15 +24,16 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 #define WheelRight2 9
 
 #define MAX_SPEED 100 // TODO: fix me
+#define TurnMAX_SPEED 50
 
 #define ACCEL 1 //속도 증가
 
 int joint_l_0_pin = 0; // PCA9865 Pin 0
 int joint_l_1_pin = 1; // PCA9865 Pin 1
 int joint_l_2_pin = 2; // PCA9865 Pin 2
-int joint_r_0_pin = 3; // PCA9865 Pin 3
-int joint_r_1_pin = 4; // PCA9865 Pin 4
-int joint_r_2_pin = 5; // PCA9865 Pin 5
+int joint_r_0_pin = 13; // PCA9865 Pin 3
+int joint_r_1_pin = 14; // PCA9865 Pin 4
+int joint_r_2_pin = 15; // PCA9865 Pin 5
 
 Servo joint_l_0;
 Servo joint_l_1;
@@ -51,11 +52,12 @@ int setJointAngle(Servo s, int v);
 
 void setup()
 {
-  Serial1.begin(9600);
+  Serial1.begin(115200);
   Serial.begin(9600);
   pwm.begin();
   pwm.setPWMFreq(FREQUENCY);
-
+  pwm.setPWM(0, 1024, 0);
+  pwm.setPWM(13, 1024, 0);
   pinMode(WheelBack1, OUTPUT);
   pinMode(WheelBack2, OUTPUT);
   pinMode(WheelLeft1, OUTPUT);
@@ -77,21 +79,9 @@ int pulseWidth(int angle)
 
 int doMovingByPreset(unsigned char preset)
 {
-  Serial.print("preset: ");
-  Serial.print(preset, DEC);
+  
 
-  if (preset < 0 || preset > MAX_PRESET)
-    return -1;
-
-  setJointAngle(joint_l_0, presetJoint[preset][0]);
-  setJointAngle(joint_l_1, presetJoint[preset][1]);
-  setJointAngle(joint_l_2, presetJoint[preset][2]);
-
-  setJointAngle(joint_r_0, presetJoint[preset][3]);
-  setJointAngle(joint_r_1, presetJoint[preset][4]);
-  setJointAngle(joint_r_2, presetJoint[preset][5]);
-
-  return preset;
+ 
 }
 
 int setJointAngle(Servo s, int v)
@@ -180,7 +170,7 @@ int setWheelRight(bool on)
 
 int setWheelTurnLeft(bool on)
 {
-  for (int i = 0; i < MAX_SPEED; i += ACCEL)
+  for (int i = 0; i < TurnMAX_SPEED; i += ACCEL)
   {
     analogWrite(WheelFront1, 0);
     analogWrite(WheelFront2, i);
@@ -190,12 +180,14 @@ int setWheelTurnLeft(bool on)
     analogWrite(WheelLeft2, i);
     analogWrite(WheelRight1, 0);
     analogWrite(WheelRight2, i);
+
+    
   }
 }
 
 int setWheelTurnRight(bool on)
 {
-  for (int i = 0; i < MAX_SPEED; i += ACCEL)
+  for (int i = 0; i < TurnMAX_SPEED; i += ACCEL)
   {
     analogWrite(WheelFront1, i);
     analogWrite(WheelFront2, 0);
@@ -205,6 +197,7 @@ int setWheelTurnRight(bool on)
     analogWrite(WheelLeft2, 0);
     analogWrite(WheelRight1, i);
     analogWrite(WheelRight2, 0);
+ 
   }
 }
 
@@ -315,6 +308,7 @@ void loop()
 
   while (Serial1.available())
   {
+    Serial.print("connected");
     cmd = Serial1.readString(); // read the incoming data as string
     dispatchCommand(cmd.c_str());
     Serial.println(cmd);
