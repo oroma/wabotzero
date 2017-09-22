@@ -45,17 +45,17 @@ void handleJointCommand()
 
   // range: 30 ~ 150
   int errorCode = 200;
-  char cmd[8] = {'M', 'J', 'A', 'L', 0xff, 0xff, 0xff, '\0'};
-
-  // e.g.) http://192.168.4.1/command/joint?part=a&d=l&no=2&angle=110
-  if (server.hasArg("part") &&
-      server.hasArg("d") &&
+  char cmd[6] = {'M', 'J', 0xff, 0xff, 0xff, '\0'};
+ 
+  // e.g.) http://192.168.4.1/command/joint?d=l&no=2&angle=110
+  if (server.hasArg("d") &&
       server.hasArg("no") &&
       server.hasArg("angle"))
   {
-    cmd[2] = toupper(server.arg("part")[0]); // part
-    cmd[3] = toupper(server.arg("d")[0]);    // direction
-    cmd[4 + server.arg("no").toInt()] = (unsigned char)server.arg("angle").toInt();
+    cmd[2] = toupper(server.arg("d")[0]);    // direction
+    cmd[3] = (server.arg("no")[0]);
+    cmd[4] = toupper(server.arg("angle")[0]);
+    
   }
   else
   {
@@ -107,15 +107,16 @@ void handlePresetCommand()
   Serial.println(server.uri());
   Serial.println(server.method());
   Serial.println(server.args());
-
+  Serial.println("Preset Command");
+  
   // range: 30 ~ 150
   int errorCode = 200;
   char cmd[3] = {'P', 0xff, '\0'};
 
-  // e.g.) http://192.168.4.1/preset/act=1
-  if (server.hasArg("act"))
+  // e.g.) http://192.168.4.1/preset/act?no=1
+  if (server.hasArg("no")==0 ||server.hasArg("no")==1||server.hasArg("no")==2 )
   {
-    cmd[1] = (unsigned char)server.arg("act").toInt();
+    cmd[1] = (server.arg("no")[0]);
   }
   else
   {
@@ -158,9 +159,9 @@ void response(int code, int wrote)
 
 void setup()
 {
-  delay(1000);
-  Serial.begin(9600);
-  toMega.begin(9600);
+  
+  Serial.begin(115200);
+  toMega.begin(115200);
 
   toMega.print('a');
   Serial.println();
@@ -178,13 +179,19 @@ void setup()
   server.on("/command", handleCommand);
   server.on("/command/joint", handleJointCommand);
   server.on("/command/wheel", handleWheelCommand);
-  server.on("/preset", handlePresetCommand);
-  server.onNotFound(handleNotFound);
+  server.on("/preset/act", handlePresetCommand);
+  server.onNotFound(handleNotFound);  
+
   server.begin();
-  Serial.println("HTTP server beginned");
+    Serial.println("HTTP server beginned");
 }
 
 void loop()
 {
+
+
   server.handleClient();
 }
+
+
+
