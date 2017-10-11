@@ -8,7 +8,7 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 #define MIN_PULSE_WIDTH       650
 #define MAX_PULSE_WIDTH       2350
 #define DEFAULT_PULSE_WIDTH   1500
-#define FREQUENCY             50
+#define FREQUENCY             60
 
 #define SERVOMIN 150 // this is the 'minimum' pulse length count (out of 4096)
 #define SERVOMAX 600 // this is the 'maximum' pulse length count (out of 4096)
@@ -24,10 +24,11 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 #define WheelRight2 9
 
 #define MAX_SPEED 100 // TODO: fix me
-#define TurnMAX_SPEED 50
+#define TurnMAX_SPEED 100
 
 #define ACCEL 1 //속도 증가
 
+int a ;
 int joint_l_0_pin = 0; // PCA9865 Pin 0
 int joint_l_1_pin = 1; // PCA9865 Pin 1
 int joint_l_2_pin = 2; // PCA9865 Pin 2
@@ -56,8 +57,6 @@ void setup()
   Serial.begin(9600);
   pwm.begin();
   pwm.setPWMFreq(FREQUENCY);
-  pwm.setPWM(0, 1024, 0);
-  pwm.setPWM(13, 1024, 0);
   pinMode(WheelBack1, OUTPUT);
   pinMode(WheelBack2, OUTPUT);
   pinMode(WheelLeft1, OUTPUT);
@@ -66,6 +65,7 @@ void setup()
   pinMode(WheelFront2, OUTPUT);
   pinMode(WheelRight1, OUTPUT);
   pinMode(WheelRight2, OUTPUT); // Wheel PWM Control
+  
 }
 
 int pulseWidth(int angle)
@@ -93,36 +93,64 @@ int setJointAngle(Servo s, int v)
   }
   // do sth or not?
 }
-int doMovingJointArm(char lr, unsigned char j0, unsigned char j1, unsigned char j2)
+void doJointOrigin() // 초기 위치 셋팅 시 origin 후 0점 셋팅 용
 {
-  Serial.print("manual: ");
+  pwm.setPWM(joint_l_0_pin, 0, 0);
+  pwm.setPWM(joint_l_1_pin, 0, 0);
+  pwm.setPWM(joint_l_2_pin, 0, 0);
+  pwm.setPWM(joint_r_0_pin, 0, 0);
+  pwm.setPWM(joint_r_1_pin, 0, 0);
+  pwm.setPWM(joint_r_2_pin, 0, 0);
+
+}
+int doMovingJointArm(char lr, unsigned char no, int value1, int value2, int value3)
+{
+  int armcmd [4] = {0,};
+  armcmd [0] = value1;
+  armcmd [1] = value2;
+  armcmd [2] = value3;
+  armcmd [3] = {'\n'};
+
+  int value = atoi(armcmd);
+
   if (lr == 'L')
   {
-    Serial.println("left");
-    setJointAngle(joint_l_0, (int)j0);
-    setJointAngle(joint_l_1, (int)j1);
-    setJointAngle(joint_l_2, (int)j2);
-  }
-  else if (lr == 'R')
-  {
-    Serial.println("right");
-    setJointAngle(joint_r_0, (int)j0);
-    setJointAngle(joint_r_1, (int)j1);
-    setJointAngle(joint_r_2, (int)j2);
-  }
-
-  delay(1000);
-
-  return lr;
-}
-
-int doMovingJointDisc(unsigned char value)
+    switch(no)
+ 
 {
-  Serial.print("manual: disc, ");
-  Serial.print(value, DEC);
+  case '1':
+  pwm.setPWM(15, 0, value);
+  break;
+  case '2':
+  pwm.setPWM(14, 0, value);
+  break;
+  case '3':
+  pwm.setPWM(13, 0, value);
+  break;
+  default:
+  break;
 
-  return value;
 }
+if (lr == 'R')
+{
+  switch(no)
+  {
+  case '1':
+  pwm.setPWM(0, 0, value);
+  break;
+  case '2':
+  pwm.setPWM(1, 0, value);
+  break;
+  case '3':
+  pwm.setPWM(2, 0, value);
+  break;
+  default:
+  break;
+  }
+}
+}
+}
+
 
 int setWheelForward(bool on)
 {
@@ -242,30 +270,14 @@ int doMovingWheel(char d)
       setWheelTurnLeft,
       setWheelTurnRight};
 
-  /*
-  int op = (int)m;
-
-  if (d == 'F') {
-    
-    if (op < 0 || op > COUNT_FP)
-      return -1;
-
-    wheelMoveFp[op]((t > 0 ? true : false));
-
-  } else if (d == 'T') {
-    if (op < 0 || op > 2)
-      return -1;
-
-    wheelTurnFp[op]((t > 0 ? true : false));
-  }
-  */
-
   switch (d)
   {
   case 'F':
+  Serial.println("FFFF<<");
     setWheelForward(true);
     break;
   case 'B':
+  Serial.println("BBBB<<");
     setWheelBackward(true);
     break;
   case 'L':
@@ -286,10 +298,8 @@ int dispatchCommand(char cmd[])
 {
   if (cmd[0] == 'M')
   {
-    if (cmd[1] == 'J' && cmd[2] == 'A')
-      doMovingJointArm(cmd[3], cmd[4], cmd[5], cmd[6]);
-    if (cmd[1] == 'J' && cmd[2] == 'D')
-      doMovingJointDisc(cmd[3]);
+    if (cmd[1] == 'J')
+      doMovingJointArm(cmd[2], cmd[3], cmd[4], cmd[5],cmd[6]);
     if (cmd[1] == 'W' && cmd[2] == 'D')
       doMovingWheel(cmd[3]);
     if (cmd[1] == 'W' && cmd[2] == 'T')
@@ -299,24 +309,42 @@ int dispatchCommand(char cmd[])
   {
     doMovingByPreset(cmd[1]);
   }
+  else if (cmd[0] == 'O')
+  {
+    doJointOrigin();
+
+  }
   return 0;
 }
 
 void loop()
 {
-  String cmd;
+  char cmd[8] = {0,};
+  char t;
+  int i = 0;
+  
+
 
   while (Serial1.available())
   {
-    Serial.print("connected");
-    cmd = Serial1.readString(); // read the incoming data as string
-    dispatchCommand(cmd.c_str());
-    Serial.println(cmd);
+    t = Serial1.read(); // read the incoming data as string
+    Serial.println(t, HEX);
+    
+
+    if (t == '\n') {
+
+      dispatchCommand(cmd);
+      Serial.println(cmd);
+      Serial1.flush();
+      memset(cmd, 0x0, 8);
+      t = '\0';
+      i = 0;
+      break;
+    } 
+    cmd[i] = t;
+    
+    i++;
   }
-//  pwm.setPWM(0, 0, pulseWidth(0));
-//  delay(1000);
-//  pwm.setPWM(0, 0, pulseWidth(120));
-//  delay(500);
-//  pwm.setPWM(0, 0, pulseWidth(90));
-//  delay(1000);
 }
+
+  
